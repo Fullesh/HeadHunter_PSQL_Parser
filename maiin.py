@@ -19,10 +19,26 @@ def check_bool_input(answer):
     return answer.lower() in ['y', 'yes', 'да']
 
 
+database_worker.__repr__()
+print('Проверяем существование БД на локальной машине, пожлауйста подождите...')
+check_database = database_worker.check_databases()
+if check_database and os.path.exists('config.txt') is True:
+    print('Всё хорошо, продолжаем')
+elif os.path.exists('config.txt') is False and check_database is True:
+    print('Конфигурация отсутствует, БД присутствует, исправляем...')
+    database_worker.total_drop()
+else:
+    print('Всё проверили, начинаем')
+
+
 def init_database(worker):
-    pass
-    # worker.create_database()
-    # worker.initialisation_of_tables()
+    """
+    Инициализируем БД и таблцы
+    :param worker: Экземпляр класса DBManager
+    :return: None
+    """
+    worker.create_database()
+    worker.initialisation_of_tables()
 
 
 def from_scratch():
@@ -39,7 +55,7 @@ def from_scratch():
         else:
             for employer in vacancies_list:
                 conf_file.write(employer + ' ')
-                _, employers_list = parser_data.get_employers(vacancies_list)
+                _, _, employers_list = parser_data.get_employers(vacancies_list)
     return employers_list
 
 
@@ -48,10 +64,11 @@ if os.path.exists('config.txt'):
     if check_bool_input(check_restart) is False:
         employers = from_scratch()
     else:
+        database_worker.delete_tables()
         with open('config.txt', 'r') as cfg_file:
             request = cfg_file.readline().split()
             if len(request) != 0:
-                _, employers = parser_data.get_employers(request)
+                _, _, employers = parser_data.get_employers(request)
             else:
                 print('Файл конфигурации пуст!')
 else:
@@ -59,6 +76,5 @@ else:
     init_database(database_worker)
 
 vacancies = parser_data.get_vacancies()
-
-
-
+database_worker.initialisation_of_tables()
+database_worker.append_employers_and_vacancies(employers, vacancies)
