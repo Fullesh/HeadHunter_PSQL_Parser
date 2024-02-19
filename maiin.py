@@ -2,7 +2,7 @@ from utils.hh_parser import Parser
 from utils.DataBaseManager import DBManager
 import os
 
-
+# Начальное объявление переменных и экземпляров класса
 request = []
 employers = []
 parser_data = Parser()
@@ -19,7 +19,6 @@ def check_bool_input(answer):
     return answer.lower() in ['y', 'yes', 'да']
 
 
-database_worker.__repr__()
 print('Проверяем существование БД на локальной машине, пожлауйста подождите...')
 check_database = database_worker.check_databases()
 if check_database and os.path.exists('config.txt') is True:
@@ -75,15 +74,19 @@ else:
     employers = from_scratch()
     init_database(database_worker)
 
+# Получаем список вакансий
 vacancies = parser_data.get_vacancies()
+# Инициализируем таблицы
 database_worker.initialisation_of_tables()
+#Заполняем таблицы данными
 database_worker.append_employers_and_vacancies(employers, vacancies)
 
 
+# Открываем файл с описанием работы программы
 with open('interaction.txt', 'r') as interaction_file:
     for row in interaction_file.readlines():
         print(row)
-while True:
+while True:  # Взаимодействие с пользователем
     try:
         interaction = int(input('Введите команду, которую хотите выполнить и 0 если хотите выйти: '))
     except ValueError:
