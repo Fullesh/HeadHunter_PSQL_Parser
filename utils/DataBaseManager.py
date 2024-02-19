@@ -42,6 +42,7 @@ class DBManager:
             return True
         except OperationalError:
             print('БД уже удалена либо ещё не существует, пропускаем...')
+        self.connection.close()
 
     def create_database(self):
         """
@@ -83,6 +84,7 @@ class DBManager:
                 print('Одна или обе таблицы существуют, пропускаем команду')
             finally:
                 print('Успешно создали таблицы')
+        self.connection.close()
 
     def append_employers_and_vacancies(self, employers, vacancies):
         """
@@ -118,6 +120,7 @@ class DBManager:
                     ))
             except UniqueViolation:
                 print('Таблица vacancies уже заполнена данными либо имеет повторяющиеся значения PrimaryKey')
+            self.connection.close()
 
     def get_companies_and_vacancies_count(self):
         """
@@ -140,16 +143,39 @@ class DBManager:
         """
         self.open_con(self.new_params)
         with self.connection.cursor() as cur:
-            cur.execute('SELECT * FROM VACANCIES')
+            cur.execute('SELECT company, vacancy_name, vacancy_url FROM VACANCIES')
             data = cur.fetchall()
             for line in data:
                 print(line)
+        self.connection.close()
 
     def get_avg_salary(self):
-        pass
+        self.open_con(self.new_params)
+        with self.connection.cursor() as cur:
+            cur.execute('SELECT ROUND(AVG((salary_max + salary_min) / 2)) FROM vacancies')
+            average_salary = cur.fetchone()
+        self.connection.close()
+        return average_salary
 
     def get_vacancies_with_keyword(self, keyword):
-        pass
+        """
+        Вывод на экран все вакансии которые соответствуют введённому ключевому слову
+        :param keyword: Ключевое слово
+        :return: None
+        """
+        self.open_con(self.new_params)
+        with self.connection.cursor() as cur:
+            cur.execute(
+                f"""
+                SELECT company, vacancy_name, vacancy_url
+                FROM vacancies
+                WHERE vacancy_name like '%{keyword}%'
+                """
+            )
+            data = cur.fetchall()
+            for line in data:
+                print(line)
+        self.connection.close()
 
     def delete_tables(self):
         """
