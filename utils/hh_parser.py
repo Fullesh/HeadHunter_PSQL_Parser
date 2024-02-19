@@ -9,6 +9,7 @@ class Parser:
         self.parsed_vacancies = []
         self.vacancies_data = []
         self.employers_ids = []
+        self.employers_info = []
 
     def __repr__(self):
         return f"Employers ID's is: {self.employers_ids} \n" \
@@ -22,7 +23,13 @@ class Parser:
             self.employeers_data.append(response.json())
         for employer in self.employeers_data:
             self.employers_ids.append(employer['items'][0]['id'])
-        return self.employeers_data, self.employers_ids
+            self.employers_info.append({
+                'id': employer['items'][0]['id'],
+                'employer_name': employer['items'][0]['name'],
+                'employer_url': employer['items'][0]['url'],
+                'open_vacancies': employer['items'][0]['open_vacancies']
+            })
+        return self.employeers_data, self.employers_ids, self.employers_info
 
     @staticmethod
     def get_salary(salary):
