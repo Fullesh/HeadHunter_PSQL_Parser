@@ -85,13 +85,21 @@ with open('interaction.txt', 'r') as interaction_file:
         print(row)
 while True:
     try:
-        interaction = int(input('Введите команду, которую хотите выполнить: '))
+        interaction = int(input('Введите команду, которую хотите выполнить и 0 если хотите выйти: '))
     except ValueError:
         print('Введно не число!')
     if interaction == 1:
         employers_count, vacancies_count = database_worker.get_companies_and_vacancies_count()
         print(f'Количество уникальных работодателей: {employers_count[0]} \n'
               f'Количество вакансий: {vacancies_count[0]}')
-        break
     elif interaction == 2:
-        pass
+        database_worker.get_all_vacancies()
+    elif interaction == 3:
+        average_salary = database_worker.get_avg_salary()
+        print(f'Средняя заработная плата по всем вакансиям составляет: {average_salary[0]} рублей.')
+    elif interaction == 4:
+        magic_word = input('Введите ключевое слово для поиска вакансий в базе данных: ')
+        database_worker.get_vacancies_with_keyword(magic_word)
+    elif interaction == 0:
+        print('Принято, выходим...')
+        break
