@@ -78,3 +78,20 @@ else:
 vacancies = parser_data.get_vacancies()
 database_worker.initialisation_of_tables()
 database_worker.append_employers_and_vacancies(employers, vacancies)
+
+
+with open('interaction.txt', 'r') as interaction_file:
+    for row in interaction_file.readlines():
+        print(row)
+while True:
+    try:
+        interaction = int(input('Введите команду, которую хотите выполнить: '))
+    except ValueError:
+        print('Введно не число!')
+    if interaction == 1:
+        employers_count, vacancies_count = database_worker.get_companies_and_vacancies_count()
+        print(f'Количество уникальных работодателей: {employers_count[0]} \n'
+              f'Количество вакансий: {vacancies_count[0]}')
+        break
+    elif interaction == 2:
+        pass
