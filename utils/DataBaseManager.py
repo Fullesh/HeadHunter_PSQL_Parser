@@ -43,19 +43,6 @@ class DBManager:
         except OperationalError:
             print('БД уже удалена либо ещё не существует, пропускаем...')
 
-    def total_drop(self):
-        """
-        Полностью удаляет БД и таблцы в ней
-        :return: None
-        """
-        try:
-            self.open_con(self.new_params)
-            with self.connection.cursor() as cur:
-                cur.execute('DROP DATABASE headhunter_database with (FORCE)')
-        except OperationalError:
-            print('База данных уже удалена или ещё не существует, пропускаем...')
-        self.delete_tables()
-
     def create_database(self):
         """
         Функция создает БД если её ещё не существует
@@ -94,6 +81,8 @@ class DBManager:
                             vacancy_url varchar(100))""")
             except DuplicateTable:
                 print('Одна или обе таблицы существуют, пропускаем команду')
+            finally:
+                print('Успешно создали таблицы')
 
     def append_employers_and_vacancies(self, employers, vacancies):
         """
@@ -131,9 +120,18 @@ class DBManager:
                 print('Таблица vacancies уже заполнена данными либо имеет повторяющиеся значения PrimaryKey')
 
     def get_companies_and_vacancies_count(self):
+        """
+        Вывод количество уникальных работодателей в БД и количество всех вакансий
+        :return: Количество уникальных работодателей и количество вакансий
+        """
         self.open_con(self.new_params)
         with self.connection.cursor() as cur:
-            pass
+            cur.execute('SELECT COUNT(DISTINCT employer_name) FROM employers')
+            employers_count = cur.fetchone()
+            cur.execute('SELECT COUNT(*) FROM vacancies')
+            vacancies_count = cur.fetchone()
+        self.connection.close()
+        return employers_count, vacancies_count
 
     def get_all_vacancies(self):
         """
@@ -167,3 +165,16 @@ class DBManager:
             print('Успешно удалили таблицу vacancies')
         except UndefinedTable:
             print('Таблиц уже не существует')
+
+    def total_drop(self):
+        """
+        Полностью удаляет БД и таблцы в ней
+        :return: None
+        """
+        try:
+            self.open_con(self.new_params)
+            with self.connection.cursor() as cur:
+                cur.execute('DROP DATABASE headhunter_database with (FORCE)')
+        except OperationalError:
+            print('База данных уже удалена или ещё не существует, пропускаем...')
+        self.delete_tables()
