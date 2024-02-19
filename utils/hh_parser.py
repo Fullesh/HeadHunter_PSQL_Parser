@@ -11,7 +11,9 @@ class Parser:
         self.employers_ids = []
 
     def __repr__(self):
-        pass
+        return f"Employers ID's is: {self.employers_ids} \n" \
+               f"Founded vacancies: {self.parsed_vacancies} \n" \
+               f"Founded vacancies in total: {len(self.parsed_vacancies)}"
 
     def get_employers(self, request):
         for query in request:
@@ -57,9 +59,6 @@ class Parser:
                 'vacancies_name': vacancy_info['name'],
                 'url_vacancies': vacancy_info['alternate_url']
             })
-        with open('Test.txt', 'w') as file:
-            for row in self.parsed_vacancies:
-                file.write(f'{row} \n')
         return self.parsed_vacancies
 
 
