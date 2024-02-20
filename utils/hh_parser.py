@@ -5,6 +5,9 @@ import requests.exceptions
 class Parser:
 
     def __init__(self):
+        """
+        Инициализация класса
+        """
         self.employeers_data = []
         self.parsed_vacancies = []
         self.vacancies_data = []
@@ -12,11 +15,20 @@ class Parser:
         self.employers_info = []
 
     def __repr__(self):
+        """
+        Репрезентация класса
+        :return:
+        """
         return f"Employers ID's is: {self.employers_ids} \n" \
                f"Founded vacancies: {self.parsed_vacancies} \n" \
                f"Founded vacancies in total: {len(self.parsed_vacancies)}"
 
     def get_employers(self, request):
+        """
+        Функция возвращает информацию о работодателях
+        :param request: Название работодателя
+        :return: Результаты запроса о работодателе, ID работодателя, информация о работодателе
+        """
         for query in request:
             params = dict(text=query, only_with_vacancies=True, per_page=100)
             response = rq.get('https://api.hh.ru/employers', params=params)
@@ -33,6 +45,11 @@ class Parser:
 
     @staticmethod
     def get_salary(salary):
+        """
+        Функция получает заработную плату из информации о работодателе
+        :param salary: Заработная плата из информации о работодателе
+        :return: Лист состоящий из минимальной и максимальной заработной платы
+        """
         salary_list = [0, 0]
         if salary and salary['from'] and salary['from'] != 0:
             salary_list[0] = salary['from']
@@ -41,6 +58,10 @@ class Parser:
         return salary_list
 
     def get_vacancies(self):
+        """
+        Функция получает вакасии по запросу к API
+        :return: Результат функции get_data()
+        """
         params = {
             "employer_id": self.employers_ids,
             "per_page": 100,
@@ -53,6 +74,11 @@ class Parser:
             print('Подключение не удалось')
 
     def get_data(self, data):
+        """
+        Функция структурирует информацию о вакансиях в читаемый вид
+        :param data: Результат функции get_vacancies()
+        :return: Структурированная информация о вакансиях
+        """
         for vacancy_info in data['items']:
             salary_from, salary_to = self.get_salary(vacancy_info['salary'])
             self.parsed_vacancies.append({
