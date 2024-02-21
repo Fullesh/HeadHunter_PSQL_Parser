@@ -39,10 +39,10 @@ class DBManager:
         try:
             self.open_con(self.new_params)
             print('Успешное подключение к БД headhunter_database')
+            self.connection.close()
             return True
         except OperationalError:
             print('БД уже удалена либо ещё не существует, пропускаем...')
-        self.connection.close()
 
     def create_database(self):
         """
