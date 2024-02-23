@@ -103,6 +103,8 @@ while True:  # Взаимодействие с пользователем
     elif interaction == 4:
         magic_word = input('Введите ключевое слово для поиска вакансий в базе данных: ')
         database_worker.get_vacancies_with_keyword(magic_word)
+    elif interaction == 5:
+        database_worker.get_vacancies_with_higher_salary()
     elif interaction == 0:
         print('Принято, выходим...')
         break
