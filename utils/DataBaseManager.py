@@ -177,6 +177,19 @@ class DBManager:
                 print(line)
         self.connection.close()
 
+    def get_vacancies_with_higher_salary(self):
+        self.open_con(self.new_params)
+        with self.connection.cursor() as cur:
+            cur.execute(f"""
+            SELECT company, salary_min, salary_max, vacancy_name, vacancy_url
+            FROM vacancies
+            WHERE (salary_min + salary_max) / 2 > {self.get_avg_salary()[0]}
+            """)
+            data = cur.fetchall()
+            for line in data:
+                print(line)
+        self.connection.close()
+
     def delete_tables(self):
         """
         Функция удаляет таблицы с работодателями и вакансиями
