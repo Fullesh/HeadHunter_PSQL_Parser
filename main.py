@@ -83,7 +83,7 @@ database_worker.append_employers_and_vacancies(employers, vacancies)
 
 
 # Открываем файл с описанием работы программы
-with open('interaction.txt', 'r') as interaction_file:
+with open('interaction.txt', 'r', encoding='utf-8') as interaction_file:
     for row in interaction_file.readlines():
         print(row)
 while True:  # Взаимодействие с пользователем
